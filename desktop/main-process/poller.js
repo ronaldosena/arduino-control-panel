@@ -21,7 +21,7 @@ function pollPorts() {
     if (ports !== null) {
       for (let i = 0; i < ports.length; i++) {
         const comName = ports[i].comName;
-        if (comName.toLowerCase().indexOf("usb") !== -1) {
+        if ((comName.toLowerCase().indexOf("dev") !== -1) || (comName.toLowerCase().indexOf("com") !== -1)) {
           if (status == DISCONNECTED) {
             status = CONNECTED
             usbPort = comName
