@@ -1,15 +1,15 @@
 {
-  "name": "arduino-control",
+  "name": "electron-quick-start",
   "version": "1.0.0",
-  "description": "Electron App to control my Arduino",
+  "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "rebuild": "electron-rebuild -f -w electron-quick-start",
-    "watch": "nodemon --exec 'electron .'",
+    "watch": "nodemon --watch * --exec \"electron .\"",
     "dev": "electron . --debug"
   },
-  "repository": "https://github.com/jstarry/arduino-control",
+  "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
     "Electron",
     "quick",
@@ -17,18 +17,19 @@
     "tutorial",
     "demo"
   ],
-  "author": "Justin Starry @jstarry",
-  "license": "MIT",
+  "author": "GitHub",
+  "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^5.0.6",
-    "electron-rebuild": "^1.8.5",
+    "electron": "^6.0.7",
+    "electron-rebuild": "^1.8.6",
     "nodemon": "^1.19.1"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.9.0",
-    "electron-window-state": "^5.0.3",
+    "bulma": "^0.7.5",
+    "chart.js": "^2.8.0",
+    "chartjs-plugin-streaming": "^1.8.0",
     "glob": "^7.1.4",
-    "node-gyp": "^5.0.3",
+    "moment": "^2.24.0",
     "serialport": "^7.1.5"
   }
 }

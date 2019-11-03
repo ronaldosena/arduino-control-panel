@@ -1,33 +1,4 @@
-* {
-  box-sizing: border-box;
-}
-
-html {
-  position: absolute;
-  background: none;
-  top: 0px;
-  left: 0px;
-  bottom: 0px;
-  right: 0px;
-}
-body {
-  font-family: monospace;
-  position: absolute;
-  display: flex;
-  background: none;
-  top: 0px;
-  left: 0px;
-  bottom: 0px;
-  right: 0px;
-  margin: 0px;
-}
-
-main {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  -webkit-app-region: drag;
-}
+@import "base.css";
 
 .fontawesome-i2svg-active nav {
   display: initial;
@@ -232,7 +203,7 @@ section#connect-section {
   font-size: 12px;
 }
 
-#baudrate {
+.dropdown {
   background: white;
   border: none;
   margin-left: 10px;

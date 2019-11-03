@@ -34,15 +34,11 @@ function systemMessage(message) {
   append(message, 'system-color', 'SYSTEM')
 }
 
-ipc.on('serial.received', function(event, message) {
-  append(message, 'connect-color', 'ARDUINO')
-})
-
 ipc.on('serial.send', function(event, message) {
   send(message)
 })
 
-ipc.on('serial.open', function(event) {
+ipc.on('serial.available', function(event) {
   systemMessage('Connection open')
 })
 

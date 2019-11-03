@@ -21,6 +21,16 @@ ipc.on('serial.close', function(event) {
   showConnect()
 })
 
+
+ipc.on('serial.available', function(event) {
+  WINDOW.setMinimumSize(400, 600)
+  WINDOW.setSize(400, 600)
+  WINDOW.setResizable(false)
+  hideAllSections()
+  hideNavAndConsole()
+  showConnect()
+})
+
 function showMainContent () {
   document.querySelector('main').classList.add('is-shown')
 }

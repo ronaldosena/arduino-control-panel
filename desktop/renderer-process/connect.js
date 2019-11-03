@@ -2,16 +2,15 @@ const BrowserWindow = require('electron').remote.BrowserWindow
 const ipc = require('electron').ipcRenderer
 
 const WINDOW = BrowserWindow.getAllWindows()[0]
-
-console.log('connect restart')
-ipc.send('usb.status', WINDOW.id)
+const availableBauds = [50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800, 9600, 19200, 38400, 57600, 115200];
+const defaultBaudIndex = 16; // 9600
 ipc.send('serial.status', WINDOW.id)
 
-var connectedButton = document.querySelector('.connected-button')
+var connectedButton = document.getElementById('connect-button')
 var connectedStatus = document.querySelector('.connected-status')
 var connectedPort = null
 
-connectedButton.addEventListener('mouseenter', function(event) {
+connectedButton.addEventListener('mouseenter', function (event) {
   if (connectedButton.classList.contains('disconnected') && !connectedButton.classList.contains('scanning') && !connectedButton.classList.contains('not-found')) {
     connectedStatus.innerHTML = 'Connect'
   } else if (connectedButton.classList.length == 2) {
@@ -19,7 +18,7 @@ connectedButton.addEventListener('mouseenter', function(event) {
   }
 })
 
-connectedButton.addEventListener('mouseleave', function(event) {
+connectedButton.addEventListener('mouseleave', function (event) {
   connectedButton.classList.add('with-hover')
   if (connectedButton.classList.contains('disconnected') && !connectedButton.classList.contains('scanning') && !connectedButton.classList.contains('not-found')) {
     connectedStatus.innerHTML = 'Ready'
@@ -28,14 +27,7 @@ connectedButton.addEventListener('mouseleave', function(event) {
   }
 })
 
-function connect() {
-  if (!connectedPort) return
-  var baudrateElement = document.getElementById('baudrate')
-  var baudrate = baudrateElement.options[baudrateElement.selectedIndex].value
-  ipc.send('serial.connect', connectedPort, parseInt(baudrate))
-}
-
-connectedButton.addEventListener('click', function(event) {
+connectedButton.addEventListener('click', function (event) {
   connectedButton.classList.remove('with-hover')
   if (connectedButton.classList.contains('disconnected') && !connectedButton.classList.contains('not-found') && !connectedButton.classList.contains('scanning')) {
     connect()
@@ -44,37 +36,60 @@ connectedButton.addEventListener('click', function(event) {
   }
 })
 
-ipc.on('usb.connected', function(event, port) {
+
+ipc.on('usb.connect', function (event) {
+  connect()
+})
+
+ipc.on('serial.open', function (event) {
+  connectedButton.classList.remove('disconnected')
+  connectedStatus.innerHTML = 'Connected'
+})
+
+ipc.on('serial.close', function (event) {
+  connectedButton.classList.add("disconnected")
+  var portElement = document.getElementById('port')
+  if (portElement.options.length > 0) {
+    connectedButton.classList.add('with-hover')
+    connectedStatus.innerHTML = 'Ready'
+  } else {
+    connectedStatus.innerHTML = 'Not Found'
+  }
+})
+
+ipc.on('serial.available', function (event, ports) {
+  var portElement = document.getElementById('port')
+  portElement.remove(0);
+  ports.reverse();
+  ports.forEach(port => {
+    var option = document.createElement("option");
+    option.text = port.name.toString();
+    portElement.add(option);
+  });
+
+  let baudrateElement = document.getElementById('baudrate');
+  baudrateElement.remove(0);
+  availableBauds.forEach(baud => {
+    var option = document.createElement("option");
+    option.text = baud.toString();
+    option.value = +baud;
+    baudrateElement.add(option);
+  });
+  baudrateElement.selectedIndex = defaultBaudIndex;
+
   if (connectedButton.classList.contains('scanning') || connectedButton.classList.contains('not-found')) {
-    connectedPort = port
     connectedButton.classList.remove('scanning')
     connectedButton.classList.remove('not-found')
     connectedStatus.innerHTML = 'Ready'
   }
 })
 
-ipc.on('usb.disconnected', function(event) {
-  connectedPort = null
-  if (!connectedButton.classList.contains('disconnected')) {
-    connectedButton.classList.add('disconnected')
-  }
-  if (!connectedButton.classList.contains('not-found')) {
-    connectedButton.classList.remove('scanning')
-    connectedButton.classList.add('not-found')
-    connectedStatus.innerHTML = 'Not Found'
-  }
-})
 
-ipc.on('usb.connect', function(event) {
-  connect()
-})
-
-ipc.on('serial.open', function(event) {
-  connectedButton.classList.remove('disconnected')
-  connectedStatus.innerHTML = 'Connected'
-})
-
-ipc.on('serial.close', function(event) {
-  connectedButton.classList.add("disconnected")
-  connectedStatus.innerHTML = connectedPort !== null ? 'Ready' : 'Not Found'
-})
+function connect() {
+  // if (!connectedPort) return
+  let portElement = document.getElementById('port')
+  let port = portElement.options[portElement.selectedIndex].value;
+  let baudrateElement = document.getElementById('baudrate')
+  let baudrate = baudrateElement.options[baudrateElement.selectedIndex].value
+  ipc.send('serial.connect', port, parseInt(baudrate))
+}
